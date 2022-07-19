@@ -214,3 +214,65 @@ FROM
 	CovidProject..CovidDeaths
 WHERE
 	continent IS NOT NULL
+	
+-- Global daily new cases
+
+CREATE VIEW
+	GlobalDaily AS
+SELECT 
+	date, 
+	SUM(new_cases) AS total_cases,
+	SUM(cast(new_deaths as int)) AS total_deaths,
+	SUM(cast(new_deaths as int))/SUM(new_cases)*100 AS death_percentage
+FROM
+	CovidProject..CovidDeaths
+WHERE
+	continent IS NOT NULL
+GROUP BY
+	date
+
+
+-- Highest death count per country
+
+CREATE VIEW 
+	HighestDeaths AS
+SELECT
+	Location, 
+	MAX(cast(total_deaths AS int)) AS total_death_count
+FROM
+	CovidProject..CovidDeaths
+WHERE 
+	continent is not null
+GROUP BY 
+	location
+
+
+-- UK total cases vs total deaths
+
+CREATE VIEW
+	UKdeaths AS
+SELECT 
+	Location, 
+	date, 
+	total_cases, 
+	total_deaths, 
+	(total_deaths/total_cases)*100 AS death_percentage
+FROM 
+	CovidProject..CovidDeaths
+WHERE 
+	location like '%Kingdom%' 
+
+-- Germany total cases vs total deaths
+
+CREATE VIEW
+	DEdeaths AS
+SELECT 
+	Location, 
+	date, 
+	total_cases, 
+	total_deaths, 
+	(total_deaths/total_cases)*100 AS death_percentage
+FROM 
+	CovidProject..CovidDeaths
+WHERE 
+	location = 'Germany' 
